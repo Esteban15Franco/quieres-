@@ -29,12 +29,10 @@
             margin-bottom: 25px;
         }
 
-        /* Zona fija del SÍ */
         .yes-zone {
             margin-bottom: 30px;
         }
 
-        /* Zona exclusiva para el NO */
         .no-zone {
             position: relative;
             height: 120px;
@@ -52,6 +50,8 @@
         #yes {
             background-color: #4CAF50;
             color: white;
+            position: relative;
+            z-index: 1;
         }
 
         #no {
@@ -94,13 +94,35 @@
     // Posición inicial
     moveNoButton();
 
-    // PC
-    noBtn.addEventListener("mouseenter", moveNoButton);
+    // 🖱 PC: huye cuando el mouse se acerca
+    noZone.addEventListener("mousemove", (e) => {
+        const rect = noBtn.getBoundingClientRect();
+        const mouseX = e.clientX;
+        const mouseY = e.clientY;
 
-    // Móvil
-    noBtn.addEventListener("touchstart", (e) => {
-        e.preventDefault();
-        moveNoButton();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        const distance = Math.hypot(centerX - mouseX, centerY - mouseY);
+
+        if (distance < 80) {
+            moveNoButton();
+        }
+    });
+
+    // 📱 Móvil: huye cuando el dedo se acerca
+    noZone.addEventListener("touchmove", (e) => {
+        const touch = e.touches[0];
+        const rect = noBtn.getBoundingClientRect();
+
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        const distance = Math.hypot(centerX - touch.clientX, centerY - touch.clientY);
+
+        if (distance < 100) {
+            moveNoButton();
+        }
     });
 
     document.getElementById("yes").addEventListener("click", () => {
