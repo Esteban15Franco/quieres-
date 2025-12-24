@@ -80,6 +80,7 @@
     const noBtn = document.getElementById("no");
     const noZone = document.getElementById("noZone");
 
+    // Función para mover el botón NO a una posición aleatoria dentro de su zona
     function moveNoButton() {
         const maxX = noZone.clientWidth - noBtn.clientWidth;
         const maxY = noZone.clientHeight - noBtn.clientHeight;
@@ -94,37 +95,32 @@
     // Posición inicial
     moveNoButton();
 
-    // 🖱 PC: huye cuando el mouse se acerca
-    noZone.addEventListener("mousemove", (e) => {
+    // Función para detectar proximidad
+    function checkProximity(x, y) {
         const rect = noBtn.getBoundingClientRect();
-        const mouseX = e.clientX;
-        const mouseY = e.clientY;
-
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
 
-        const distance = Math.hypot(centerX - mouseX, centerY - mouseY);
+        const distance = Math.hypot(centerX - x, centerY - y);
+        return distance < 120; // ajusta este valor para mayor dificultad
+    }
 
-        if (distance < 80) {
+    // 🖱 PC: huye si el mouse se acerca
+    document.addEventListener("mousemove", (e) => {
+        if (checkProximity(e.clientX, e.clientY)) {
             moveNoButton();
         }
     });
 
-    // 📱 Móvil: huye cuando el dedo se acerca
-    noZone.addEventListener("touchmove", (e) => {
+    // 📱 Móvil: huye si el dedo se acerca
+    document.addEventListener("touchmove", (e) => {
         const touch = e.touches[0];
-        const rect = noBtn.getBoundingClientRect();
-
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-
-        const distance = Math.hypot(centerX - touch.clientX, centerY - touch.clientY);
-
-        if (distance < 100) {
+        if (checkProximity(touch.clientX, touch.clientY)) {
             moveNoButton();
         }
     });
 
+    // Botón Sí
     document.getElementById("yes").addEventListener("click", () => {
         if (navigator.vibrate) navigator.vibrate(200);
 
